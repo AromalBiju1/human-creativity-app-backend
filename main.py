@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from database import engine,Base
+import models
 
+
+Base.metadata.create_all(bind=engine) #Create tables in supabase
 app = FastAPI()
 origins = [
     "http://localhost:3000",
@@ -18,3 +22,12 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Hello from Backend!"}
+
+
+
+
+
+
+
+
+
