@@ -1,6 +1,6 @@
 from sqlalchemy import Column,Integer,String,Boolean,DateTime
 from sqlalchemy.sql import func
-from database import Base
+from database.database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -11,6 +11,16 @@ class User(Base):
     is_verified = Column(Boolean,default=False)
     role = Column(String,default="user")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+
+
+
+
+
+
+
+
 
 
 
