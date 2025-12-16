@@ -12,7 +12,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24
 def load_key(filename):
     try:
         with open(filename,"r") as f:
-            return f.read
+            return f.read()
     except FileNotFoundError:
         return None   
 
