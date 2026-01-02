@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine,Base
-import models
+from database.database import engine,Base
+from routers.auth import auth
+from routers.posts import posts
 
 
 Base.metadata.create_all(bind=engine) #Create tables in supabase
@@ -22,6 +23,11 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Hello from Backend!"}
+
+
+
+app.include_router(auth.router,prefix="/auth",tags=["Authentication"])    
+app.include_router(posts.router, prefix="/posts", tags=["Posts"])
 
 
 
