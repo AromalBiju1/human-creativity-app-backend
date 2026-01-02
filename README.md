@@ -6,8 +6,8 @@ This is the FastAPI backend for the application.
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
-   cd canvas-backend
+   git clone https://github.com/AromalBiju1/human-creativity-app-backend
+   cd human-creativity-backend
 
    
 2. **Create a virtual environment**   
