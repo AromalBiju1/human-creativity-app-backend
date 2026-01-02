@@ -6,7 +6,7 @@ python-jose[cryptography]
 argon2-cffi
 python-multipart
 python-dotenv
-supabase
 pydantic  
 pathlib
 pydantic[email]
+cloudinary

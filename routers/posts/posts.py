@@ -1,22 +1,28 @@
 import os
-from config.config import supabase_key,supabase_url
 from fastapi import APIRouter,HTTPException,UploadFile,Depends,File,Form
 from sqlalchemy.orm import Session
 from database.database import get_db
 from database.models import Post,User
 from database.schemas import PostResponse
 from routers.auth.auth import get_current_user
-from supabase import create_client,Client
+import cloudinary
+import cloudinary.uploader
+from config.config import cloudinary_api_key,cloudinary_name,cloudinary_secret
 import uuid
 from typing import List
 
 router = APIRouter()
-if not supabase_url or not supabase_key:
-    print("Error: Couldn't find supabase url or supabase key")
+if not all([cloudinary_name,cloudinary_secret,cloudinary_api_key]):
+    print("Error: Couldn't find cloudinary credentials")
 
 
-supabase: Client = create_client(supabase_url,supabase_key) # connect to supabase storage
+cloudinary.config(
+    cloud_name = cloudinary_name,
+    api_key = cloudinary_api_key,
+    api_secret=cloudinary_secret,
+    secure=True
 
+)
 
 @router.post("/upload",response_model=PostResponse)
 async def create_post(
@@ -37,28 +43,26 @@ async def create_post(
  unique_filename = f"{uuid.uuid4()}.{file_extension}"
  file_path = f"uploads/{unique_filename}"
  try:
-    file_content = await file.read() 
+    upload_result = cloudinary.uploader.upload(
+     file.file,
+     folder="app_uploads"
+   )
+    image_url = upload_result.get('secure_url')
 
-    #upload to supabse image bucket
-    supabase.storage.from_("images").upload(file_path,file_content,
-    {"content-type":file.content_type}) 
-    public_url = supabase.storage.from_("images").get_public_url(file_path) 
-    # save  to db
 
     new_post = Post(
-        title=title,
-        content=content,
-        image_url=public_url,
-        owner_id=current_user.id
-
-    )
+            title=title,
+            content=content,
+            image_url=image_url,
+            owner_id=current_user.id
+        )
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
     return new_post
  except Exception as e:
     print(f"❌ Upload Error: {e}")
-    raise HTTPException(status_code=500, detail=str(e))
+    raise HTTPException(status_code=500, detail="Image upload failed")
 
 
 
