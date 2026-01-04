@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.database import engine,Base
 from routers.auth import auth
 from routers.posts import posts
-
+from routers.profile import profile
 
 Base.metadata.create_all(bind=engine) #Create tables in supabase
 app = FastAPI()
@@ -28,6 +28,7 @@ def read_root():
 
 app.include_router(auth.router,prefix="/auth",tags=["Authentication"])    
 app.include_router(posts.router, prefix="/posts", tags=["Posts"])
+app.include_router(profile.router,prefix="/profile",tags=["Profile"])
 
 
 

@@ -43,6 +43,22 @@ class PostResponse(PostBase):
     class config:
         from_attributes = True
 
+
+
+class UserProfileResponse(BaseModel):
+    id:int
+    username:str
+    email:EmailStr
+    is_verified : bool
+    role: str
+    created_at: datetime
+    posts : list[PostResponse] = []
+    
+
+    class Config:
+        from_attributes = True
+
+
         
 
 
