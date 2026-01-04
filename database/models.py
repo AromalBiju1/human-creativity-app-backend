@@ -1,7 +1,10 @@
 from sqlalchemy import Column,Integer,String,Boolean,DateTime,ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+
 from database.database import Base
+
+
 
 class User(Base):
     __tablename__ = "users"
@@ -24,25 +27,3 @@ class Post(Base):
     owner_id=Column(Integer,ForeignKey("users.id")) #Fkey
     owner=relationship("User",back_populates="posts") # lets us access user obj from post
     
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
