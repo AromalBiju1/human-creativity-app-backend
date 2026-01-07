@@ -37,5 +37,4 @@ class Story(Base):
     media_type = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(hours=24))
-    owner_id = Column(Integer, ForeignKey("users.id")) 
     owner = relationship("User", back_populates="stories")
