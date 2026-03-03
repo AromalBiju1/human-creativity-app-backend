@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
-
+from database.models import MessageType,ConversationType
 class OwnerInfo(BaseModel):
     username: str
     profile_pic: Optional[str] = None
@@ -217,7 +217,6 @@ class ConversationListResponse(BaseModel):
     group_pic: Optional[str] = None
     updated_at: Optional[datetime] = None
     last_message: Optional[MessageResponse] = None
-
     # Unread count for this user — computed in the router, not the DB
     unread_count: int = 0
     # Participants needed to show the other person's avatar in a DM
