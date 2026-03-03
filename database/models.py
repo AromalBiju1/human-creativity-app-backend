@@ -1,9 +1,17 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey,Enum,Text
+
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table,Enum,Text
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from database.database import Base
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import enum
+followers_table = Table(
+    "followers",
+    Base.metadata,
+    Column("follower_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("following_id", Integer, ForeignKey("users.id"), primary_key=True)
+)
+
 
 
 #Enums
@@ -37,29 +45,47 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     role = Column(String, default="user")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
     posts = relationship("Post", back_populates="owner")
-    stories = relationship("Story", back_populates="owner") 
+
+    stories = relationship("Story", back_populates="owner")
     participations = relationship("ConversationParticipant", back_populates="user")
     sent_messages = relationship("Message", back_populates="sender", foreign_keys="Message.sender_id")
+    followers = relationship(
+        "User",
+        secondary=followers_table,
+        primaryjoin=id == followers_table.c.following_id,
+        secondaryjoin=id == followers_table.c.follower_id,
+        back_populates="following"
+    )
+    following = relationship(
+        "User",
+        secondary=followers_table,
+        primaryjoin=id == followers_table.c.follower_id,
+        secondaryjoin=id == followers_table.c.following_id,
+        back_populates="followers"
+    )
+
 
 
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
-    content = Column(String) 
-    media_url = Column(String) 
+    content = Column(String)
+    media_url = Column(String)
     media_type = Column(String, default="image")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    owner_id = Column(Integer, ForeignKey("users.id")) 
-    owner = relationship("User", back_populates="posts") 
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates="posts")
 
 class Story(Base):
     __tablename__ = "stories"
-    id = Column(Integer, index=True, primary_key=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))  
+    id = Column(Integer, primary_key=True, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
     media_url = Column(String)
     media_type = Column(String)
+
     created_at = Column(DateTime, default=datetime.utcnow)
     expires_at = Column(DateTime, default=lambda: datetime.utcnow() + timedelta(hours=24))
     owner = relationship("User", back_populates="stories")
@@ -131,6 +157,5 @@ class Message(Base):
     )
     sender   = relationship("User", back_populates="sent_messages", foreign_keys=[sender_id])
     reply_to = relationship("Message", remote_side="Message.id", foreign_keys=[reply_to_id])
-
 
 

@@ -54,14 +54,27 @@ class PostResponse(PostBase):
         from_attributes = True
 
 
+class UserMiniResponse(BaseModel):
+    id:int
+    username:str
+
+    class Config:
+        from_attributes = True
+
+
 class UserProfileResponse(BaseModel):
     id:int
     username:str
     email:EmailStr
     is_verified:bool
+    bio:str
+    profile_pic:str
     role:str
     created_at:datetime
     posts : list[PostResponse] = []
+    followers : list[UserMiniResponse] = []
+    following: list[UserMiniResponse] = []
+
 
 
     class Config:
@@ -80,6 +93,13 @@ class StoryResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserSearchResult(BaseModel):
+    id: int
+    username: str
+    followers_count: int
+    is_following: bool  # 👈 This tells frontend to show Follow/Unfollow button
 
 
 # Message Schemas
@@ -134,8 +154,14 @@ class ParticipantResponse(BaseModel):
     # Nested user info for displaying member list
     user: Optional[OwnerInfo] = None
 
+
     class Config:
         from_attributes = True
+
+
+class FollowResponse(BaseModel):
+    message: str
+    followers_count: int
 
 
 class ParticipantUpdate(BaseModel):
