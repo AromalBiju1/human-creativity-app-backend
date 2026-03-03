@@ -1,5 +1,5 @@
 import os
-from fastapi import APIRouter, HTTPException, UploadFile, Depends, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, Depends, File, Form,status,Response
 from sqlalchemy.orm import Session
 from database.database import get_db
 from database.models import Post, User, Story
@@ -85,6 +85,7 @@ async def create_upload(
         db.commit()
         db.refresh(new_post)
         return new_post
+
 @router.get("/stories", response_model=List[StoryResponse])
 def get_stories(db: Session = Depends(get_db)):
     now = datetime.utcnow()
@@ -95,3 +96,39 @@ def get_stories(db: Session = Depends(get_db)):
 def get_posts(db: Session = Depends(get_db)):
     posts = db.query(Post).order_by(Post.created_at.desc()).all()
     return posts
+
+
+@router.delete("/delete/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_item(
+    item_id: int,
+    type: str = "post", 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)):
+   
+    model = Story if type == "story" else Post
+    item_query = db.query(model).filter(model.id == item_id)
+    item = item_query.first()
+
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"{type.capitalize()} with id: {item_id} not found"
+        )
+    if item.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Not authorized to perform requested action"
+        )
+
+    try:
+        if item.media_url and "app_uploads" in item.media_url:
+            file_name = item.media_url.split("/")[-1].split(".")[0]
+            public_id = f"app_uploads/{file_name}"
+            cloudinary.uploader.destroy(public_id, resource_type=item.media_type)
+            print(f"🗑️ Deleted from Cloudinary: {public_id}")
+    except Exception as e:
+        print(f"⚠️ Cloudinary deletion failed: {e}")
+    item_query.delete(synchronize_session=False)
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
