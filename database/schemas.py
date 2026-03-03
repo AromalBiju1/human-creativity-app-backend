@@ -132,6 +132,7 @@ class MessageResponse(BaseModel):
     sender: Optional[OwnerInfo] = None
     # Nested reply preview — shows a snippet of the replied-to message
     reply_to: Optional["MessageResponse"] = None
+    media_filename: Optional[str] = None   
 
     class Config:
         from_attributes = True
@@ -236,6 +237,8 @@ class WSMessageIn(BaseModel):
     message_type: MessageType = MessageType.text
     media_url: Optional[str] = None
     reply_to_id: Optional[int] = None
+    media_filename: Optional[str] = None   # ✅ original filename
+    upload_id: Optional[str] = None        # ✅ from request-upload response
 
 
 class WSMessageOut(BaseModel):

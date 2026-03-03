@@ -30,6 +30,7 @@ class ParticipantRole(str, enum.Enum):
 class MessageType(str, enum.Enum):
     text    = "text"
     image   = "image"
+    document = "document" 
     video   = "video"
     system  = "system"   # e.g. "John left the group"
  
@@ -157,5 +158,8 @@ class Message(Base):
     )
     sender   = relationship("User", back_populates="sent_messages", foreign_keys=[sender_id])
     reply_to = relationship("Message", remote_side="Message.id", foreign_keys=[reply_to_id])
+    # ... existing columns ...
+    media_filename  = Column(String, nullable=True)
+ 
 
 
