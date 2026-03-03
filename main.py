@@ -5,9 +5,23 @@ from routers.auth import auth
 from routers.posts import posts
 from routers.profile import profile
 from routers.follow import follow
+from routers.chat import router as chat_router      
+from routers.chat.manager import manager            
+from contextlib import asynccontextmanager
 
 Base.metadata.create_all(bind=engine) #Create tables in supabase
-app = FastAPI()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await manager.startup()    # 🔴 Connect to Redis when app starts
+    yield
+    await manager.shutdown()   # 🔴 Close Redis when app stops
+
+
+app = FastAPI(lifespan=lifespan)
+
+
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -31,6 +45,7 @@ app.include_router(auth.router,prefix="/auth",tags=["Authentication"])
 app.include_router(posts.router, prefix="/posts", tags=["Posts"])
 app.include_router(profile.router,prefix="/profile",tags=["Profile"])
 app.include_router(follow.router,prefix="/follow",tags=["Follow"])
+app.include_router(chat_router,prefix="/chat",tags=["Chat"])        
 
 
 
