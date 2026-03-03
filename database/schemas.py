@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
-from database.models import MessageType,ConversationType
+from database.models import MessageType,ConversationType,ParticipantRole
 class OwnerInfo(BaseModel):
     username: str
     profile_pic: Optional[str] = None
