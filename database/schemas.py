@@ -63,19 +63,18 @@ class UserMiniResponse(BaseModel):
 
 
 class UserProfileResponse(BaseModel):
-    id:int
-    username:str
-    email:EmailStr
-    is_verified:bool
-    bio:str
-    profile_pic:str
-    role:str
-    created_at:datetime
-    posts : list[PostResponse] = []
-    followers : list[UserMiniResponse] = []
+    id: int
+    username: str
+    email: EmailStr
+    is_verified: bool
+    bio: Optional[str] = None
+    profile_pic: Optional[str] = None
+    role: str
+    created_at: datetime
+
+    posts: list[PostResponse] = []
+    followers: list[UserMiniResponse] = []
     following: list[UserMiniResponse] = []
-
-
 
     class Config:
         from_attributes = True
