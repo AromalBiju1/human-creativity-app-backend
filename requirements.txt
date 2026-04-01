@@ -12,3 +12,5 @@ pydantic[email]
 cloudinary
 redis[asyncio]
 asyncio
+websockets
+uvicorn[standard]
