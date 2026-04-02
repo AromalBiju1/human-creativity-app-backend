@@ -91,3 +91,11 @@ async def websocket_chat(websocket: WebSocket, conversation_id: int, token: str 
         await manager.set_offline(user.id)
         await manager.clear_typing(conversation_id, user.id)
         await manager.publish({"event": "user_offline", "user_id": user.id, "username": user.username}, conversation_id)
+
+    except Exception as e:
+        # This catches actual bad data (like malformed JSON)
+        # Only try to send an error if the socket is still open
+        try:
+            await websocket.send_text(json.dumps({"event": "error", "detail": "Invalid message format"}))
+        except RuntimeError:
+            pass # Socket was already closed, ignore it     
