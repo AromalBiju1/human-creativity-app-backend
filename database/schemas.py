@@ -67,10 +67,13 @@ class UserProfileResponse(BaseModel):
     username:str
     email:EmailStr
     is_verified:bool
-    bio:str
-    profile_pic:str
+    bio:Optional[str] = None
+    profile_pic:Optional[str] = None
     role:str
     created_at:datetime
+    posts_count: int = 0
+    followers_count: int = 0
+    following_count: int = 0
     posts : list[PostResponse] = []
     followers : list[UserMiniResponse] = []
     following: list[UserMiniResponse] = []
