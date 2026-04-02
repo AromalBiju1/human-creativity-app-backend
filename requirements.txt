@@ -10,5 +10,7 @@ pydantic
 pathlib
 pydantic[email]
 cloudinary
-redis
+redis[asyncio]
 asyncio
+websockets
+uvicorn[standard]
