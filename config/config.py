@@ -8,5 +8,5 @@ database_url = os.getenv("DATABASE_URL")
 cloudinary_api_key = os.getenv("CLOUDINARY_API_KEY")
 cloudinary_secret = os.getenv("CLOUDINARY_API_SECRET")
 cloudinary_name = os.getenv("CLOUDINARY_NAME")
-redis_url = os.getenv("REDIS_URL")
+redis_url = os.getenv("REDIS_URL","redis://localhost:6379")
 
