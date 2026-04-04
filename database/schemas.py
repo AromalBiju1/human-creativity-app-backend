@@ -63,6 +63,7 @@ class UserMiniResponse(BaseModel):
 
 
 class UserProfileResponse(BaseModel):
+
     id: int
     username: str
     email: EmailStr

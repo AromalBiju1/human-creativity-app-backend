@@ -30,7 +30,13 @@ def get_my_profile(
         "profile_pic": user.profile_pic,
         "role": user.role,
         "created_at": user.created_at,
+<<<<<<< HEAD
         "posts": user.posts,
         "followers": user.followers,
         "following": user.following,
+=======
+        "posts_count": len(user.posts),
+        "followers_count": len(user.followers),
+        "following_count": len(user.following),
+>>>>>>> ed9e98cbf0d69f02b7a74a8a1f48ee2391470f66
     }
